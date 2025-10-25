@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PodVault Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>PodVault Dashboard</h1>
+  <p>Total Logs: {{ total_logs }}</p>
+  <p>Total Files in Vault: {{ total_files }}</p>
+
+  <canvas id="logChart" width="400" height="200"></canvas>
+
+  <script>
+    // Safely insert the Flask-rendered data as JSON so the JS parser is happy
+    const labels = {{ logs | map(attribute='filename') | list | tojson | safe }};
+    const dataPoints = {{ range(1, logs | length + 1) | list | tojson | safe }};
+
+    const ctx = document.getElementById('logChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Recent Actions',
+            data: dataPoints,
+            backgroundColor: 'rgba(54, 162, 235, 0.5)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+  </script>
+
+  <a href="/">Back to Home</a>
+</body>
+</html>

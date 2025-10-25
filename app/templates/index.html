@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PodVault Home</title>
+</head>
+<body>
+    <h1>Welcome {{ user.username }}</h1>
+    <a href="/logout">Logout</a> | <a href="/dashboard">Dashboard</a>
+
+    <h3>Upload & Encrypt File</h3>
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <button type="submit">Upload & Encrypt</button>
+    </form>
+
+    <h3>Audit Logs</h3>
+    <ul>
+        {% for log in logs %}
+            <li>{{ log.timestamp }} - {{ log.action }} - {{ log.filename }} (by {{ log.user }})</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

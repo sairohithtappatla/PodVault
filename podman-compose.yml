@@ -1,0 +1,9 @@
+version: "3"
+services:
+  podvault:
+    build: .
+    container_name: podvault-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./uploads:/app/uploads
