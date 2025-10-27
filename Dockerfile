@@ -1,14 +1,18 @@
 FROM python:3.9-slim
 
 WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements.txt /app/
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
 COPY . /app
 
-RUN pip install -r requirements.txt
-
-# Install Podman inside container (for managing vaults)
-RUN apt-get update && \
-    apt-get install -y podman && \
-    rm -rf /var/lib/apt/lists/*
-
+# Expose Flask port
 EXPOSE 8080
+
+# Run the application
 CMD ["python", "run.py"]
