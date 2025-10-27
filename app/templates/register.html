@@ -2,13 +2,20 @@
 
 {% block extra_css %}
 <style>
+  .register-wrapper {
+    min-height: calc(100vh - 100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .register-container {
-    max-width: 500px;
-    margin: 3rem auto;
     background: white;
     padding: 3rem;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 500px;
   }
 
   .register-header {
@@ -17,13 +24,48 @@
   }
 
   .register-header h1 {
-    color: #333;
-    font-size: 2rem;
+    color: #2c3e50;
+    font-size: 1.8rem;
+    font-weight: 600;
     margin-bottom: 0.5rem;
   }
 
   .register-header p {
-    color: #666;
+    color: #7f8c8d;
+    font-size: 0.95rem;
+  }
+
+  .features-box {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    padding: 1.5rem;
+    border-radius: 6px;
+    margin-bottom: 2rem;
+  }
+
+  .features-box h3 {
+    color: #2c3e50;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  .features-box ul {
+    list-style: none;
+  }
+
+  .features-box li {
+    padding: 0.5rem 0;
+    color: #5a6c7d;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .features-box li i {
+    color: #27ae60;
+    font-size: 0.85rem;
   }
 
   .form-group {
@@ -32,157 +74,88 @@
 
   .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    color: #333;
-    font-weight: 600;
+    margin-bottom: 0.6rem;
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 0.95rem;
   }
 
   .form-group input {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
+    padding: 0.85rem 1rem;
+    border: 1.5px solid #dfe6e9;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+    font-family: 'Roboto', sans-serif;
   }
 
   .form-group input:focus {
     outline: none;
-    border-color: #667eea;
-  }
-
-  .password-strength {
-    margin-top: 0.5rem;
-    height: 4px;
-    background: #e5e7eb;
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .password-strength-bar {
-    height: 100%;
-    width: 0%;
-    transition: width 0.3s, background 0.3s;
-  }
-
-  .features-list {
-    background: #f9fafb;
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-  }
-
-  .features-list h3 {
-    color: #333;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-  }
-
-  .features-list ul {
-    list-style: none;
-  }
-
-  .features-list li {
-    padding: 0.5rem 0;
-    color: #666;
-  }
-
-  .features-list li i {
-    color: #10b981;
-    margin-right: 0.5rem;
+    border-color: #3498db;
   }
 
   .form-actions .btn {
     width: 100%;
-    padding: 1rem;
+    padding: 0.9rem;
+    font-size: 1rem;
   }
 
   .login-link {
     text-align: center;
-    margin-top: 1rem;
-    color: #666;
+    margin-top: 1.5rem;
+    color: #7f8c8d;
+    font-size: 0.95rem;
   }
 
   .login-link a {
-    color: #667eea;
-    font-weight: 600;
+    color: #3498db;
+    font-weight: 500;
     text-decoration: none;
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="register-container">
-  <div class="register-header">
-    <h1><i class="fas fa-user-plus"></i> Create Account</h1>
-    <p>Get your own secure vault in seconds</p>
-  </div>
-
-  <div class="features-list">
-    <h3>Your vault includes:</h3>
-    <ul>
-      <li><i class="fas fa-check-circle"></i> Isolated Podman container</li>
-      <li><i class="fas fa-check-circle"></i> Unique encryption key</li>
-      <li><i class="fas fa-check-circle"></i> Auto key rotation every 5 minutes</li>
-      <li><i class="fas fa-check-circle"></i> Unlimited encrypted file storage</li>
-    </ul>
-  </div>
-
-  <form method="POST" action="/register">
-    <div class="form-group">
-      <label for="username">
-        <i class="fas fa-user"></i> Username
-      </label>
-      <input type="text" id="username" name="username" placeholder="Choose a username" required minlength="3">
+<div class="register-wrapper">
+  <div class="register-container">
+    <div class="register-header">
+      <h1>Create Account</h1>
+      <p>Get your own secure vault</p>
     </div>
 
-    <div class="form-group">
-      <label for="password">
-        <i class="fas fa-key"></i> Password
-      </label>
-      <input type="password" id="password" name="password" placeholder="Create a strong password" required
-        minlength="6">
-      <div class="password-strength">
-        <div class="password-strength-bar" id="strengthBar"></div>
+    <div class="features-box">
+      <h3>Your vault includes:</h3>
+      <ul>
+        <li><i class="fas fa-check-circle"></i> Isolated Podman container</li>
+        <li><i class="fas fa-check-circle"></i> Unique encryption key</li>
+        <li><i class="fas fa-check-circle"></i> Auto key rotation (5 min)</li>
+        <li><i class="fas fa-check-circle"></i> Encrypted file storage</li>
+      </ul>
+    </div>
+
+    <form method="POST" action="/register">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Choose a username" required minlength="3"
+          autofocus>
       </div>
-    </div>
 
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">
-        <i class="fas fa-rocket"></i> Create Vault & Register
-      </button>
-    </div>
-  </form>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Create a password" required minlength="6">
+      </div>
 
-  <div class="login-link">
-    Already have an account? <a href="/login">Login here</a>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-user-plus"></i> Create Vault & Register
+        </button>
+      </div>
+    </form>
+
+    <div class="login-link">
+      Already have an account? <a href="/login">Login</a>
+    </div>
   </div>
 </div>
-
-<script>
-  const passwordInput = document.getElementById('password');
-  const strengthBar = document.getElementById('strengthBar');
-
-  passwordInput.addEventListener('input', (e) => {
-    const password = e.target.value;
-    let strength = 0;
-
-    if (password.length >= 6) strength += 25;
-    if (password.length >= 10) strength += 25;
-    if (/[A-Z]/.test(password)) strength += 25;
-    if (/[0-9]/.test(password)) strength += 25;
-
-    strengthBar.style.width = strength + '%';
-
-    if (strength <= 25) {
-      strengthBar.style.background = '#ef4444';
-    } else if (strength <= 50) {
-      strengthBar.style.background = '#f59e0b';
-    } else if (strength <= 75) {
-      strengthBar.style.background = '#3b82f6';
-    } else {
-      strengthBar.style.background = '#10b981';
-    }
-  });
-</script>
 {% endblock %}

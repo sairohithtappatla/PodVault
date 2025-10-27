@@ -7,6 +7,12 @@ import os
 
 main = Blueprint('main', __name__)
 
+@main.route('/')
+def landing():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    return redirect(url_for('main.login'))
+
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -15,23 +21,17 @@ def login():
         user = User.query.filter_by(username=username, password=password).first()
         if user:
             login_user(user)
-            flash('Login successful!')
+            flash('✅ Login successful!')
             return redirect(url_for('main.index'))
-        flash('Invalid credentials!')
+        flash('❌ Invalid credentials!')
     return render_template('login.html')
 
 @main.route('/logout')
 @login_required
 def logout():
     logout_user()
-    flash('Logged out!')
+    flash('✅ Logged out successfully!')
     return redirect(url_for('main.login'))
-
-@main.route('/')
-def landing():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
-    return render_template('landing.html')
 
 @main.route('/home')
 @login_required
@@ -46,20 +46,15 @@ def register():
         username = request.form['username']
         password = request.form['password']
         
-        # Check if user exists
         if User.query.filter_by(username=username).first():
-            flash('Username already exists!')
+            flash('❌ Username already exists!')
             return redirect(url_for('main.register'))
         
-        # Create user vault container
         vault_name = create_user_vault(username)
-        
-        # Create user in database
         user = User(username=username, password=password, vault_name=vault_name)
         db.session.add(user)
         db.session.commit()
         
-        # Log vault creation
         db.session.add(AuditLog(
             action="vault_created",
             filename=None,
@@ -69,7 +64,7 @@ def register():
         ))
         db.session.commit()
         
-        flash(f'Account created! Your vault: {vault_name}')
+        flash(f'✅ Account created! Your vault: {vault_name}')
         return redirect(url_for('main.login'))
     
     return render_template('register.html')
@@ -79,16 +74,13 @@ def register():
 def upload():
     file = request.files['file']
     if file:
-        # Save temporarily
         temp_path = os.path.join("/tmp", file.filename)
         file.save(temp_path)
         
-        # Encrypt and store in user's vault
         vault_name = current_user.vault_name
         try:
             enc_filename = encrypt_file_for_vault(temp_path, vault_name)
             
-            # Log action
             db.session.add(AuditLog(
                 action="Encrypted Upload",
                 filename=file.filename,
@@ -99,7 +91,7 @@ def upload():
             ))
             db.session.commit()
             
-            flash(f"✅ File '{file.filename}' encrypted in vault {vault_name}!")
+            flash(f"✅ File '{file.filename}' encrypted successfully!")
         except Exception as e:
             db.session.add(AuditLog(
                 action="Upload Failed",
@@ -112,7 +104,6 @@ def upload():
             db.session.commit()
             flash(f"❌ Upload failed: {str(e)}")
         finally:
-            # Clean up temp file
             if os.path.exists(temp_path):
                 os.remove(temp_path)
     
@@ -124,10 +115,8 @@ def decrypt(filename):
     vault_name = current_user.vault_name
     
     try:
-        # Decrypt from user's vault
         dec_path = decrypt_file_from_vault(filename, vault_name)
         
-        # Log action
         db.session.add(AuditLog(
             action="Decrypted Download",
             filename=filename,
@@ -156,16 +145,9 @@ def decrypt(filename):
 @main.route('/dashboard')
 @login_required
 def dashboard():
-    # Get all vaults count
     total_vaults = User.query.count()
-    
-    # Get all logs
     total_logs = AuditLog.query.count()
-    
-    # Get user's file count
     total_files = len(list_user_files(current_user.vault_name))
-    
-    # Recent logs across all users (admin view)
     recent_logs = AuditLog.query.order_by(AuditLog.timestamp.desc()).limit(10).all()
 
-    return render_template('dashboard.html',total_logs=total_logs,total_files=total_files,total_vaults=total_vaults,logs=recent_logs)
+    return render_template('dashboard.html', total_logs=total_logs, total_files=total_files, total_vaults=total_vaults, logs=recent_logs)
