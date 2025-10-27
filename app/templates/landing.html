@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+  .hero {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: white;
+  }
+
+  .hero h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .hero p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-buttons .btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 4rem;
+  }
+
+  .feature-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-10px);
+  }
+
+  .feature-icon {
+    font-size: 3rem;
+    color: #667eea;
+    margin-bottom: 1rem;
+  }
+
+  .feature-card h3 {
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-card p {
+    color: #666;
+    line-height: 1.6;
+  }
+
+  .stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin: 4rem 0;
+  }
+
+  .stat-box {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    display: block;
+  }
+
+  .stat-label {
+    opacity: 0.8;
+    margin-top: 0.5rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <h1>🔐 Secure Your Files with PodVault</h1>
+  <p>Enterprise-grade containerized storage with automatic encryption key rotation</p>
+
+  <div class="cta-buttons">
+    <a href="/register" class="btn btn-primary">
+      <i class="fas fa-rocket"></i> Start Free Trial
+    </a>
+    <a href="/features" class="btn btn-secondary">
+      <i class="fas fa-info-circle"></i> Learn More
+    </a>
+  </div>
+
+  <div class="stats-section">
+    <div class="stat-box">
+      <span class="stat-number"><i class="fas fa-shield-alt"></i></span>
+      <div class="stat-label">Military-Grade Encryption</div>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number"><i class="fas fa-sync-alt"></i></span>
+      <div class="stat-label">Auto Key Rotation</div>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number"><i class="fas fa-boxes"></i></span>
+      <div class="stat-label">Container Isolation</div>
+    </div>
+    <div class="stat-box">
+      <span class="stat-number"><i class="fas fa-clock"></i></span>
+      <div class="stat-label">Real-Time Audit Logs</div>
+    </div>
+  </div>
+</div>
+
+<div class="features-grid">
+  <div class="feature-card">
+    <div class="feature-icon"><i class="fas fa-lock"></i></div>
+    <h3>Per-Vault Encryption</h3>
+    <p>Each user gets a unique encryption key stored in an isolated Podman container. One breach ≠ total compromise.</p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon"><i class="fas fa-key"></i></div>
+    <h3>Automatic Key Rotation</h3>
+    <p>Keys rotate every 5 minutes with seamless re-encryption. No manual intervention required.</p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon"><i class="fas fa-container-storage"></i></div>
+    <h3>Container Isolation</h3>
+    <p>Powered by Podman containers. Each vault is completely isolated from others.</p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon"><i class="fas fa-file-shield"></i></div>
+    <h3>Fernet Encryption</h3>
+    <p>Industry-standard symmetric encryption ensures your data stays private.</p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon"><i class="fas fa-history"></i></div>
+    <h3>Comprehensive Audit Logs</h3>
+    <p>Track every upload, download, and decryption event with timestamps and IP addresses.</p>
+  </div>
+
+  <div class="feature-card">
+    <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+    <h3>Real-Time Dashboard</h3>
+    <p>Visualize vault activity, file counts, and security events with interactive charts.</p>
+  </div>
+</div>
+
+<div style="text-align: center; margin-top: 4rem; color: white;">
+  <p style="font-size: 1.2rem; margin-bottom: 1rem;">Don't have an account?</p>
+  <a href="/register" class="btn btn-primary" style="font-size: 1.2rem; padding: 1.2rem 2.5rem;">
+    <i class="fas fa-user-plus"></i> Sign Up Now
+  </a>
+</div>
+{% endblock %}

@@ -28,13 +28,16 @@ def logout():
     return redirect(url_for('main.login'))
 
 @main.route('/')
+def landing():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    return render_template('landing.html')
+
+@main.route('/home')
 @login_required
 def index():
     logs = AuditLog.query.filter_by(user=current_user.username).order_by(AuditLog.timestamp.desc()).all()
-    
-    # Get files from user's vault container
     vault_files = list_user_files(current_user.vault_name)
-    
     return render_template('index.html', logs=logs, user=current_user, vault_files=vault_files)
 
 @main.route('/register', methods=['GET', 'POST'])
@@ -164,9 +167,5 @@ def dashboard():
     
     # Recent logs across all users (admin view)
     recent_logs = AuditLog.query.order_by(AuditLog.timestamp.desc()).limit(10).all()
-    
-    return render_template('dashboard.html',
-                         total_logs=total_logs, 
-                         total_files=total_files,
-                         total_vaults=total_vaults,
-                         logs=recent_logs)
+
+    return render_template('dashboard.html',total_logs=total_logs,total_files=total_files,total_vaults=total_vaults,logs=recent_logs)

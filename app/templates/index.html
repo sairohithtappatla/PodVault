@@ -1,75 +1,284 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>PodVault Home</title>
-    <style>
-        .vault-info {
-            background: #e8f4f8;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
 
-        .file-list {
-            background: #f5f5f5;
-            padding: 10px;
-            border-radius: 5px;
-        }
+    .dashboard-header h1 {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
 
-        .file-item {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
-        }
+    .vault-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
 
-        .file-item:last-child {
-            border-bottom: none;
-        }
-    </style>
-</head>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
 
-<body>
-    <h1>Welcome {{ user.username }}</h1>
-    <a href="/logout">Logout</a> | <a href="/dashboard">Dashboard</a>
+    .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: transform 0.3s;
+    }
 
-    <div class="vault-info">
-        <h3>🔐 Your Vault: {{ user.vault_name }}</h3>
-        <p>Encrypted Files: {{ vault_files|length }}</p>
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .section {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-header h2 {
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .upload-zone {
+        border: 2px dashed #667eea;
+        border-radius: 12px;
+        padding: 3rem;
+        text-align: center;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .upload-zone:hover {
+        background: #f9fafb;
+        border-color: #764ba2;
+    }
+
+    .upload-zone i {
+        font-size: 3rem;
+        color: #667eea;
+        margin-bottom: 1rem;
+    }
+
+    .file-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .file-card {
+        background: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s;
+    }
+
+    .file-card:hover {
+        background: #f3f4f6;
+        transform: translateX(5px);
+    }
+
+    .file-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .file-info i {
+        font-size: 2rem;
+        color: #667eea;
+    }
+
+    .file-name {
+        font-weight: 600;
+        color: #333;
+        word-break: break-all;
+    }
+
+    .file-actions a {
+        color: #667eea;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        background: white;
+        transition: all 0.3s;
+    }
+
+    .file-actions a:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    .activity-log {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .log-item {
+        padding: 1rem;
+        border-left: 4px solid #667eea;
+        background: #f9fafb;
+        margin-bottom: 0.5rem;
+        border-radius: 4px;
+    }
+
+    .log-item.failed {
+        border-left-color: #ef4444;
+    }
+
+    .log-time {
+        font-size: 0.85rem;
+        color: #999;
+    }
+
+    .log-action {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #999;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>Welcome, {{ user.username }}! 👋</h1>
+    <span class="vault-badge">
+        <i class="fas fa-shield-alt"></i> {{ user.vault_name }}
+    </span>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">📁</div>
+        <div class="stat-value">{{ vault_files|length }}</div>
+        <div class="stat-label">Encrypted Files</div>
     </div>
+    <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-value">{{ logs|length }}</div>
+        <div class="stat-label">Recent Actions</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🔐</div>
+        <div class="stat-value">AES-128</div>
+        <div class="stat-label">Encryption</div>
+    </div>
+</div>
 
-    <h3>📤 Upload & Encrypt File</h3>
+<div class="section">
+    <div class="section-header">
+        <h2><i class="fas fa-cloud-upload-alt"></i> Upload Files</h2>
+    </div>
     <form method="POST" action="/upload" enctype="multipart/form-data">
-        <input type="file" name="file" required>
-        <button type="submit">Upload & Encrypt</button>
+        <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-file-upload"></i>
+            <h3>Click to select a file</h3>
+            <p>Files will be automatically encrypted before storage</p>
+            <input type="file" id="fileInput" name="file" style="display: none;" onchange="this.form.submit()" required>
+        </div>
     </form>
+</div>
 
-    <h3>📁 Your Encrypted Files</h3>
-    <div class="file-list">
-        {% if vault_files and vault_files[0] %}
-        {% for file in vault_files %}
-        <div class="file-item">
-            📄 {{ file }}
-            <a href="/decrypt/{{ file }}">Download (Decrypt)</a>
+<div class="section">
+    <div class="section-header">
+        <h2><i class="fas fa-folder-open"></i> Your Files</h2>
+    </div>
+    {% if vault_files and vault_files[0] %}
+        <div class="file-grid">
+            {% for file in vault_files %}
+            <div class="file-card">
+                <div class="file-info">
+                    <i class="fas fa-file-alt"></i>
+                    <div class="file-name">{{ file }}</div>
+                </div>
+                <div class="file-actions">
+                    <a href="/decrypt/{{ file }}">
+                        <i class="fas fa-download"></i> Download
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>No files uploaded yet. Start by uploading your first file!</p>
+        </div>
+    {% endif %}
+</div>
+
+<div class="section">
+    <div class="section-header">
+        <h2><i class="fas fa-history"></i> Activity Log</h2>
+    </div>
+    <div class="activity-log">
+        {% for log in logs %}
+        <div class="log-item {% if log.status == 'failed' %}failed{% endif %}">
+            <div class="log-time">{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+            <div class="log-action">
+                <i class="fas fa-{{ 'exclamation-circle' if log.status == 'failed' else 'check-circle' }}"></i>
+                {{ log.action }}
+                {% if log.filename %}- {{ log.filename }}{% endif %}
+            </div>
         </div>
         {% endfor %}
-        {% else %}
-        <p>No files in your vault yet.</p>
-        {% endif %}
     </div>
-
-    <h3>📝 Recent Activity</h3>
-    <ul>
-        {% for log in logs %}
-        <li>
-            {{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }} -
-            <strong>{{ log.action }}</strong> -
-            {{ log.filename if log.filename else 'N/A' }}
-            {% if log.status == 'failed' %}
-            <span style="color: red;">❌ FAILED</span>
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
-</body>
-
-</html>
+</div>
+{% endblock %}
