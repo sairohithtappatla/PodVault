@@ -1,23 +1,75 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>PodVault Home</title>
+    <style>
+        .vault-info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .file-list {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .file-item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+    </style>
 </head>
+
 <body>
     <h1>Welcome {{ user.username }}</h1>
     <a href="/logout">Logout</a> | <a href="/dashboard">Dashboard</a>
 
-    <h3>Upload & Encrypt File</h3>
+    <div class="vault-info">
+        <h3>🔐 Your Vault: {{ user.vault_name }}</h3>
+        <p>Encrypted Files: {{ vault_files|length }}</p>
+    </div>
+
+    <h3>📤 Upload & Encrypt File</h3>
     <form method="POST" action="/upload" enctype="multipart/form-data">
         <input type="file" name="file" required>
         <button type="submit">Upload & Encrypt</button>
     </form>
 
-    <h3>Audit Logs</h3>
+    <h3>📁 Your Encrypted Files</h3>
+    <div class="file-list">
+        {% if vault_files and vault_files[0] %}
+        {% for file in vault_files %}
+        <div class="file-item">
+            📄 {{ file }}
+            <a href="/decrypt/{{ file }}">Download (Decrypt)</a>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>No files in your vault yet.</p>
+        {% endif %}
+    </div>
+
+    <h3>📝 Recent Activity</h3>
     <ul>
         {% for log in logs %}
-            <li>{{ log.timestamp }} - {{ log.action }} - {{ log.filename }} (by {{ log.user }})</li>
+        <li>
+            {{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }} -
+            <strong>{{ log.action }}</strong> -
+            {{ log.filename if log.filename else 'N/A' }}
+            {% if log.status == 'failed' %}
+            <span style="color: red;">❌ FAILED</span>
+            {% endif %}
+        </li>
         {% endfor %}
     </ul>
 </body>
+
 </html>
