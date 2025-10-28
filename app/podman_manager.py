@@ -5,9 +5,20 @@ def create_user_vault(username):
     """Create isolated Podman container for user"""
     vault_name = f"vault_{username}"
     
-    # Create volumes
-    subprocess.run(["podman", "volume", "create", f"{vault_name}_data"])
-    subprocess.run(["podman", "volume", "create", f"{vault_name}_keys"])
+    # Check if vault already exists
+    check_container = subprocess.run([
+        "podman", "ps", "-a", "--filter", f"name={vault_name}", "--format", "{{.Names}}"
+    ], capture_output=True, text=True)
+    
+    if vault_name in check_container.stdout:
+        print(f"⚠️ Vault {vault_name} already exists, using existing vault")
+        return vault_name
+    
+    # Create volumes (ignore if already exist)
+    subprocess.run(["podman", "volume", "create", f"{vault_name}_data"], 
+                   stderr=subprocess.DEVNULL)
+    subprocess.run(["podman", "volume", "create", f"{vault_name}_keys"], 
+                   stderr=subprocess.DEVNULL)
     
     # Create container
     subprocess.run([
@@ -15,8 +26,8 @@ def create_user_vault(username):
         "--name", vault_name,
         "-v", f"{vault_name}_data:/vault/data",
         "-v", f"{vault_name}_keys:/vault/keys",
-        "alpine:latest",  # Lightweight base image
-        "sleep", "infinity"  # Keep container running
+        "alpine:latest",
+        "sleep", "infinity"
     ])
     
     # Generate initial key
