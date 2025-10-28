@@ -3,21 +3,21 @@
 {% block extra_css %}
 <style>
   .register-wrapper {
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 60px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem 1rem;
+    padding: 1rem;
   }
 
-  .register-container {
+  .register-box {
     background: white;
-    padding: 2.5rem;
+    padding: 2rem 2.5rem;
     border-radius: 8px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     width: 100%;
-    max-width: 480px;
-    margin: 0 auto;
+    max-width: 450px;
+    border: 1px solid #e2e8f0;
   }
 
   .register-header {
@@ -26,151 +26,146 @@
   }
 
   .register-header h1 {
-    color: #2c3e50;
-    font-size: 1.6rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    color: #1a202c;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
   }
 
   .register-header p {
-    color: #7f8c8d;
-    font-size: 0.9rem;
+    color: #718096;
+    font-size: 0.875rem;
   }
 
-  .features-box {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    padding: 1.2rem;
+  .features {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    padding: 1rem;
     border-radius: 6px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
 
-  .features-box h3 {
-    color: #2c3e50;
-    font-size: 0.95rem;
-    margin-bottom: 0.8rem;
+  .features h3 {
+    font-size: 0.875rem;
     font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.75rem;
   }
 
-  .features-box ul {
+  .features ul {
     list-style: none;
   }
 
-  .features-box li {
-    padding: 0.4rem 0;
-    color: #5a6c7d;
-    font-size: 0.85rem;
+  .features li {
+    padding: 0.35rem 0;
+    font-size: 0.8rem;
+    color: #4a5568;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
   }
 
-  .features-box li i {
-    color: #27ae60;
-    font-size: 0.8rem;
+  .features li i {
+    color: #48bb78;
+    font-size: 0.75rem;
   }
 
   .form-group {
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
   }
 
   .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    color: #2c3e50;
+    margin-bottom: 0.4rem;
+    color: #2d3748;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
   }
 
   .form-group input {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1.5px solid #dfe6e9;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid #cbd5e0;
     border-radius: 6px;
-    font-size: 0.9rem;
-    transition: border-color 0.2s;
-    font-family: 'Roboto', sans-serif;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
   }
 
   .form-group input:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
   }
 
-  .form-actions .btn {
+  .register-btn {
     width: 100%;
-    padding: 0.8rem;
-    font-size: 0.95rem;
+    padding: 0.7rem;
+    margin-top: 0.5rem;
+    background: #3182ce;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.2s;
   }
 
-  .login-link {
+  .register-btn:hover {
+    background: #2c5282;
+  }
+
+  .login-text {
     text-align: center;
-    margin-top: 1.2rem;
-    color: #7f8c8d;
+    margin-top: 1.25rem;
     font-size: 0.85rem;
+    color: #4a5568;
   }
 
-  .login-link a {
-    color: #3498db;
-    font-weight: 500;
+  .login-text a {
+    color: #3182ce;
+    font-weight: 600;
     text-decoration: none;
-  }
-
-  .login-link a:hover {
-    text-decoration: underline;
-  }
-
-  /* Mobile responsive */
-  @media (max-width: 768px) {
-    .register-container {
-      padding: 2rem;
-    }
-
-    .register-header h1 {
-      font-size: 1.4rem;
-    }
   }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="register-wrapper">
-  <div class="register-container">
+  <div class="register-box">
     <div class="register-header">
       <h1>Create Account</h1>
-      <p>Get your own secure vault</p>
+      <p>Get your secure vault instantly</p>
     </div>
 
-    <div class="features-box">
+    <div class="features">
       <h3>Your vault includes:</h3>
       <ul>
         <li><i class="fas fa-check-circle"></i> Isolated Podman container</li>
         <li><i class="fas fa-check-circle"></i> Unique encryption key</li>
         <li><i class="fas fa-check-circle"></i> Auto key rotation (5 min)</li>
-        <li><i class="fas fa-check-circle"></i> Encrypted file storage</li>
+        <li><i class="fas fa-check-circle"></i> Unlimited encrypted storage</li>
       </ul>
     </div>
 
-    <form method="POST" action="/register">
+    <form method="POST">
       <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" placeholder="Choose a username" required minlength="3"
-          autofocus>
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Choose username" required minlength="3" autofocus>
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Create a password" required minlength="6">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Create password" required minlength="6">
       </div>
 
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">
-          <i class="fas fa-user-plus"></i> Create Vault & Register
-        </button>
-      </div>
+      <button type="submit" class="register-btn">
+        <i class="fas fa-user-plus"></i> Create Vault & Register
+      </button>
     </form>
 
-    <div class="login-link">
+    <div class="login-text">
       Already have an account? <a href="/login">Login</a>
     </div>
   </div>

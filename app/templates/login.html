@@ -3,135 +3,131 @@
 {% block extra_css %}
 <style>
     .login-wrapper {
-        min-height: calc(100vh - 80px);
+        min-height: calc(100vh - 60px);
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 2rem 1rem;
+        padding: 1rem;
     }
 
-    .login-container {
+    .login-box {
         background: white;
-        padding: 2.5rem;
+        padding: 2rem 2.5rem;
         border-radius: 8px;
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         width: 100%;
-        max-width: 420px;
-        margin: 0 auto;
+        max-width: 400px;
+        border: 1px solid #e2e8f0;
     }
 
     .login-header {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.75rem;
     }
 
     .login-header h1 {
-        color: #2c3e50;
-        font-size: 1.6rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
+        color: #1a202c;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
     }
 
     .login-header p {
-        color: #7f8c8d;
-        font-size: 0.9rem;
+        color: #718096;
+        font-size: 0.875rem;
     }
 
     .form-group {
-        margin-bottom: 1.2rem;
+        margin-bottom: 1rem;
     }
 
     .form-group label {
         display: block;
-        margin-bottom: 0.5rem;
-        color: #2c3e50;
+        margin-bottom: 0.4rem;
+        color: #2d3748;
         font-weight: 500;
-        font-size: 0.9rem;
+        font-size: 0.875rem;
     }
 
     .form-group input {
         width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1.5px solid #dfe6e9;
+        padding: 0.65rem 0.75rem;
+        border: 1px solid #cbd5e0;
         border-radius: 6px;
-        font-size: 0.9rem;
-        transition: border-color 0.2s;
-        font-family: 'Roboto', sans-serif;
+        font-size: 0.875rem;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
     }
 
     .form-group input:focus {
         outline: none;
-        border-color: #3498db;
+        border-color: #3182ce;
+        box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
     }
 
-    .form-actions {
-        margin-top: 1.5rem;
-    }
-
-    .form-actions .btn {
+    .login-btn {
         width: 100%;
-        padding: 0.8rem;
-        font-size: 0.95rem;
+        padding: 0.7rem;
+        margin-top: 0.5rem;
+        background: #3182ce;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: background 0.2s;
     }
 
-    .signup-link {
+    .login-btn:hover {
+        background: #2c5282;
+    }
+
+    .signup-text {
         text-align: center;
-        margin-top: 1.2rem;
-        color: #7f8c8d;
+        margin-top: 1.25rem;
         font-size: 0.85rem;
+        color: #4a5568;
     }
 
-    .signup-link a {
-        color: #3498db;
-        font-weight: 500;
+    .signup-text a {
+        color: #3182ce;
+        font-weight: 600;
         text-decoration: none;
     }
 
-    .signup-link a:hover {
+    .signup-text a:hover {
         text-decoration: underline;
-    }
-
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .login-container {
-            padding: 2rem;
-        }
-
-        .login-header h1 {
-            font-size: 1.4rem;
-        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="login-wrapper">
-    <div class="login-container">
+    <div class="login-box">
         <div class="login-header">
             <h1>Welcome Back</h1>
-            <p>Login to access your secure vault</p>
+            <p>Login to your secure vault</p>
         </div>
 
-        <form method="POST" action="/login">
+        <form method="POST">
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Enter username" required autofocus>
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter password" required>
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-            </div>
+            <button type="submit" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
         </form>
 
-        <div class="signup-link">
-            Don't have an account? <a href="/register">Sign Up</a>
+        <div class="signup-text">
+            Don't have an account? <a href="/register">Sign up</a>
         </div>
     </div>
 </div>

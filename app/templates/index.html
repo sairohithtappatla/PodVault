@@ -2,370 +2,318 @@
 
 {% block extra_css %}
 <style>
-    .page-header {
+    .header-card {
         background: white;
-        padding: 2rem;
+        padding: 1.25rem 1.5rem;
         border-radius: 8px;
-        margin-bottom: 2rem;
+        margin-bottom: 1.25rem;
+        border: 1px solid #e2e8f0;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e1e8ed;
     }
 
-    .page-header h1 {
-        color: #2c3e50;
-        font-size: 1.8rem;
-        font-weight: 600;
+    .header-card h1 {
+        color: #1a202c;
+        font-size: 1.4rem;
+        font-weight: 700;
         margin-bottom: 0.5rem;
     }
 
-    .vault-info {
+    .vault-tag {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        background: #ecf0f1;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        color: #2c3e50;
-        font-weight: 500;
+        gap: 6px;
+        background: #ebf8ff;
+        color: #2c5282;
+        padding: 0.4rem 0.75rem;
+        border-radius: 5px;
+        font-size: 0.8rem;
+        font-weight: 600;
     }
 
-    .vault-info i {
-        color: #3498db;
+    .vault-tag i {
+        color: #3182ce;
     }
 
-    .stats-grid {
+    .stats {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.25rem;
     }
 
-    .stat-card {
+    .stat {
         background: white;
-        padding: 1.8rem;
+        padding: 1.25rem;
         border-radius: 8px;
-        border: 1px solid #e1e8ed;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    .stat-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-
-    .stat-icon {
-        font-size: 2rem;
+        border: 1px solid #e2e8f0;
+        text-align: center;
     }
 
     .stat-value {
-        font-size: 2.2rem;
+        font-size: 2rem;
         font-weight: 700;
-        color: #2c3e50;
+        color: #1a202c;
+        margin-bottom: 0.25rem;
     }
 
     .stat-label {
-        color: #7f8c8d;
-        font-size: 0.9rem;
+        font-size: 0.75rem;
+        color: #718096;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        font-weight: 500;
-    }
-
-    .section {
-        background: white;
-        padding: 2rem;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-        border: 1px solid #e1e8ed;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    .section-header {
-        margin-bottom: 1.5rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #ecf0f1;
-    }
-
-    .section-header h2 {
-        color: #2c3e50;
-        font-size: 1.3rem;
         font-weight: 600;
+    }
+
+    .card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1.25rem;
+        border: 1px solid #e2e8f0;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1a202c;
+        margin-bottom: 1rem;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
     }
 
-    .section-header h2 i {
-        color: #3498db;
+    .card-title i {
+        color: #3182ce;
     }
 
-    .upload-zone {
-        border: 2px dashed #bdc3c7;
+    .upload-area {
+        border: 2px dashed #cbd5e0;
         border-radius: 8px;
-        padding: 3rem;
+        padding: 2rem;
         text-align: center;
         cursor: pointer;
         transition: all 0.2s;
-        background: #fafbfc;
+        background: #f7fafc;
     }
 
-    .upload-zone:hover {
-        border-color: #3498db;
-        background: #f8f9fa;
+    .upload-area:hover {
+        border-color: #3182ce;
+        background: #ebf8ff;
     }
 
-    .upload-zone i {
-        font-size: 3rem;
-        color: #95a5a6;
-        margin-bottom: 1rem;
+    .upload-area i {
+        font-size: 2.5rem;
+        color: #a0aec0;
+        margin-bottom: 0.75rem;
     }
 
-    .upload-zone h3 {
-        color: #2c3e50;
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
+    .upload-area h3 {
+        color: #2d3748;
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
     }
 
-    .upload-zone p {
-        color: #7f8c8d;
-        font-size: 0.95rem;
+    .upload-area p {
+        color: #718096;
+        font-size: 0.8rem;
     }
 
-    .file-table {
-        width: 100%;
-        border-collapse: collapse;
+    .file-list {
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        overflow: hidden;
     }
 
-    .file-table thead {
-        background: #f8f9fa;
+    .file-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid #e2e8f0;
+        transition: background 0.2s;
     }
 
-    .file-table th {
-        padding: 1rem;
-        text-align: left;
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-bottom: 2px solid #e1e8ed;
+    .file-item:last-child {
+        border-bottom: none;
     }
 
-    .file-table td {
-        padding: 1rem;
-        border-bottom: 1px solid #ecf0f1;
-        color: #5a6c7d;
-    }
-
-    .file-table tr:hover {
-        background: #f8f9fa;
+    .file-item:hover {
+        background: #f7fafc;
     }
 
     .file-name {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
+        color: #2d3748;
+        font-size: 0.875rem;
         font-weight: 500;
-        color: #2c3e50;
     }
 
     .file-name i {
-        color: #3498db;
-        font-size: 1.2rem;
+        color: #3182ce;
     }
 
-    .btn-download {
-        padding: 0.5rem 1rem;
-        background: #3498db;
+    .download-btn {
+        padding: 0.4rem 0.9rem;
+        background: #3182ce;
         color: white;
         border-radius: 5px;
         text-decoration: none;
-        font-size: 0.9rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
         transition: background 0.2s;
     }
 
-    .btn-download:hover {
-        background: #2980b9;
+    .download-btn:hover {
+        background: #2c5282;
     }
 
-    .empty-state {
+    .empty {
         text-align: center;
-        padding: 3rem;
-        color: #95a5a6;
+        padding: 2.5rem;
+        color: #a0aec0;
     }
 
-    .empty-state i {
-        font-size: 4rem;
-        margin-bottom: 1rem;
+    .empty i {
+        font-size: 3rem;
+        margin-bottom: 0.75rem;
         opacity: 0.4;
     }
 
-    .empty-state p {
-        font-size: 1rem;
+    .empty p {
+        font-size: 0.9rem;
     }
 
-    .log-table {
-        width: 100%;
-        border-collapse: collapse;
-        max-height: 400px;
+    .activity {
+        max-height: 350px;
         overflow-y: auto;
     }
 
-    .log-table th {
-        padding: 0.8rem;
-        text-align: left;
-        background: #f8f9fa;
-        color: #2c3e50;
-        font-weight: 600;
+    .log-item {
+        display: grid;
+        grid-template-columns: 140px 1fr auto;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e2e8f0;
         font-size: 0.85rem;
-        text-transform: uppercase;
-        border-bottom: 2px solid #e1e8ed;
     }
 
-    .log-table td {
-        padding: 0.8rem;
-        border-bottom: 1px solid #ecf0f1;
-        font-size: 0.9rem;
-        color: #5a6c7d;
+    .log-item:last-child {
+        border-bottom: none;
+    }
+
+    .log-time {
+        color: #718096;
+        font-size: 0.75rem;
     }
 
     .log-action {
+        color: #2d3748;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
     }
 
     .log-action i {
-        font-size: 0.9rem;
+        font-size: 0.75rem;
     }
 
     .log-action i.fa-check-circle {
-        color: #27ae60;
+        color: #48bb78;
     }
 
     .log-action i.fa-exclamation-circle {
-        color: #e74c3c;
+        color: #f56565;
+    }
+
+    .log-file {
+        color: #718096;
+        font-size: 0.8rem;
+        text-align: right;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1>Welcome, {{ user.username }}</h1>
-    <div class="vault-info">
+<div class="header-card">
+    <h1>Welcome, {{ user.username }}!</h1>
+    <div class="vault-tag">
         <i class="fas fa-shield-alt"></i>
-        <span>{{ user.vault_name }}</span>
+        {{ user.vault_name }}
     </div>
 </div>
 
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-header">
-            <div class="stat-icon">📁</div>
-        </div>
+<div class="stats">
+    <div class="stat">
         <div class="stat-value">{{ vault_files|length }}</div>
         <div class="stat-label">Encrypted Files</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-header">
-            <div class="stat-icon">📝</div>
-        </div>
+    <div class="stat">
         <div class="stat-value">{{ logs|length }}</div>
         <div class="stat-label">Recent Actions</div>
     </div>
-    <div class="stat-card">
-        <div class="stat-header">
-            <div class="stat-icon">🔐</div>
-        </div>
+    <div class="stat">
         <div class="stat-value">AES-128</div>
         <div class="stat-label">Encryption</div>
     </div>
 </div>
 
-<div class="section">
-    <div class="section-header">
-        <h2><i class="fas fa-cloud-upload-alt"></i> Upload Files</h2>
+<div class="card">
+    <div class="card-title">
+        <i class="fas fa-cloud-upload-alt"></i> Upload Files
     </div>
     <form method="POST" action="/upload" enctype="multipart/form-data">
-        <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
             <i class="fas fa-file-upload"></i>
-            <h3>Click to select a file</h3>
-            <p>Files will be automatically encrypted before storage</p>
-            <input type="file" id="fileInput" name="file" style="display: none;" onchange="this.form.submit()" required>
+            <h3>Click to select file</h3>
+            <p>Automatically encrypted before storage</p>
+            <input type="file" id="fileInput" name="file" style="display:none" onchange="this.form.submit()" required>
         </div>
     </form>
 </div>
 
-<div class="section">
-    <div class="section-header">
-        <h2><i class="fas fa-folder-open"></i> Your Files</h2>
+<div class="card">
+    <div class="card-title">
+        <i class="fas fa-folder-open"></i> Your Files
     </div>
     {% if vault_files and vault_files[0] %}
-    <table class="file-table">
-        <thead>
-            <tr>
-                <th>File Name</th>
-                <th style="text-align: right;">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for file in vault_files %}
-            <tr>
-                <td>
-                    <div class="file-name">
-                        <i class="fas fa-file-alt"></i>
-                        <span>{{ file }}</span>
-                    </div>
-                </td>
-                <td style="text-align: right;">
-                    <a href="/decrypt/{{ file }}" class="btn-download">
-                        <i class="fas fa-download"></i> Download
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="file-list">
+        {% for file in vault_files %}
+        <div class="file-item">
+            <div class="file-name">
+                <i class="fas fa-file-alt"></i>
+                {{ file }}
+            </div>
+            <a href="/decrypt/{{ file }}" class="download-btn">
+                <i class="fas fa-download"></i> Download
+            </a>
+        </div>
+        {% endfor %}
+    </div>
     {% else %}
-    <div class="empty-state">
+    <div class="empty">
         <i class="fas fa-inbox"></i>
-        <p>No files uploaded yet. Start by uploading your first file!</p>
+        <p>No files yet. Upload your first file!</p>
     </div>
     {% endif %}
 </div>
 
-<div class="section">
-    <div class="section-header">
-        <h2><i class="fas fa-history"></i> Activity Log</h2>
+<div class="card">
+    <div class="card-title">
+        <i class="fas fa-history"></i> Activity Log
     </div>
-    <table class="log-table">
-        <thead>
-            <tr>
-                <th>Timestamp</th>
-                <th>Action</th>
-                <th>File</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for log in logs %}
-            <tr>
-                <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                <td>
-                    <div class="log-action">
-                        <i class="fas fa-{{ 'exclamation-circle' if log.status == 'failed' else 'check-circle' }}"></i>
-                        <span>{{ log.action }}</span>
-                    </div>
-                </td>
-                <td>{{ log.filename if log.filename else '-' }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="activity">
+        {% for log in logs %}
+        <div class="log-item">
+            <div class="log-time">{{ log.timestamp.strftime('%m/%d %H:%M') }}</div>
+            <div class="log-action">
+                <i class="fas fa-{{ 'exclamation-circle' if log.status == 'failed' else 'check-circle' }}"></i>
+                {{ log.action }}
+            </div>
+            <div class="log-file">{{ log.filename if log.filename else '-' }}</div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

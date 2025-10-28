@@ -2,100 +2,95 @@
 
 {% block extra_css %}
 <style>
-  .dashboard-title {
+  .page-title {
     background: white;
-    padding: 2rem;
+    padding: 1.25rem 1.5rem;
     border-radius: 8px;
-    margin-bottom: 2rem;
-    border: 1px solid #e1e8ed;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.25rem;
+    border: 1px solid #e2e8f0;
   }
 
-  .dashboard-title h1 {
-    color: #2c3e50;
-    font-size: 1.8rem;
-    font-weight: 600;
+  .page-title h1 {
+    color: #1a202c;
+    font-size: 1.4rem;
+    font-weight: 700;
   }
 
-  .stats-row {
+  .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
   }
 
   .stat-box {
     background: white;
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: 8px;
-    border: 1px solid #e1e8ed;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
     text-align: center;
   }
 
   .stat-box h2 {
-    font-size: 2.5rem;
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
+    font-size: 2.2rem;
+    color: #1a202c;
     font-weight: 700;
+    margin-bottom: 0.25rem;
   }
 
   .stat-box p {
-    color: #7f8c8d;
-    font-size: 0.95rem;
+    color: #718096;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    font-weight: 500;
-  }
-
-  .chart-section {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    border: 1px solid #e1e8ed;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  }
-
-  .chart-section h3 {
-    color: #2c3e50;
-    font-size: 1.3rem;
-    margin-bottom: 1.5rem;
     font-weight: 600;
+  }
+
+  .chart-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 1.25rem;
+  }
+
+  .chart-card h3 {
+    color: #1a202c;
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
 
-  .chart-section h3 i {
-    color: #3498db;
+  .chart-card h3 i {
+    color: #3182ce;
   }
 
-  .back-link {
-    margin-top: 2rem;
+  .back-btn {
     text-align: center;
+    margin-top: 1rem;
   }
 
-  .back-link a {
-    color: #3498db;
+  .back-btn a {
+    color: #3182ce;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.875rem;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-  }
-
-  .back-link a:hover {
-    text-decoration: underline;
   }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-title">
+<div class="page-title">
   <h1>📊 Analytics Dashboard</h1>
 </div>
 
-<div class="stats-row">
+<div class="stats-grid">
   <div class="stat-box">
     <h2>{{ total_vaults }}</h2>
     <p>Total Vaults</p>
@@ -110,44 +105,36 @@
   </div>
 </div>
 
-<div class="chart-section">
+<div class="chart-card">
   <h3><i class="fas fa-chart-bar"></i> Recent Activity</h3>
-  <canvas id="logChart" width="400" height="200"></canvas>
+  <canvas id="logChart" width="400" height="180"></canvas>
 </div>
 
-<div class="back-link">
+<div class="back-btn">
   <a href="/home"><i class="fas fa-arrow-left"></i> Back to Home</a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  const labels = {{ logs | map(attribute = 'action') | list | tojson | safe }};
-  const dataPoints = {{ range(1, logs | length + 1) | list | tojson | safe }};
-
   const ctx = document.getElementById('logChart').getContext('2d');
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: labels,
-      datasets: [{
-        label: 'Actions',
-        data: dataPoints,
-        backgroundColor: '#3498db',
-        borderRadius: 6
+      labels: {{ logs | map(attribute = 'action') | list | tojson | safe }},
+    datasets: [{
+      label: 'Actions',
+      data: {{ range(1, logs| length + 1) | list | tojson | safe }},
+  backgroundColor: '#3182ce',
+    borderRadius: 4
       }]
     },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { stepSize: 1 }
-        }
-      }
+  options: {
+    responsive: true,
+      plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, ticks: { stepSize: 1 } }
     }
+  }
   });
 </script>
 {% endblock %}
