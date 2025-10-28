@@ -4,6 +4,7 @@ from app.models import db, AuditLog, User
 from app.podman_manager import create_user_vault, list_user_files
 from app.key_rotation import encrypt_file_for_vault, decrypt_file_from_vault
 import os
+import traceback
 
 main = Blueprint('main', __name__)
 
@@ -93,6 +94,9 @@ def upload():
             
             flash(f"✅ File '{file.filename}' encrypted successfully!")
         except Exception as e:
+            print(f"❌ UPLOAD ERROR: {str(e)}")
+            print(traceback.format_exc())
+            
             db.session.add(AuditLog(
                 action="Upload Failed",
                 filename=file.filename,
@@ -114,9 +118,20 @@ def upload():
 def decrypt(filename):
     vault_name = current_user.vault_name
     
+    print(f"\n🔍 DECRYPT REQUEST:")
+    print(f"  Filename: {filename}")
+    print(f"  Vault: {vault_name}")
+    print(f"  User: {current_user.username}")
+    
     try:
         # Decrypt file from vault
+        print(f"  🔓 Attempting decryption...")
         dec_path = decrypt_file_from_vault(filename, vault_name)
+        print(f"  ✅ Decrypted to: {dec_path}")
+        
+        # Verify file exists
+        if not os.path.exists(dec_path):
+            raise FileNotFoundError(f"Decrypted file not found at {dec_path}")
         
         # Log successful download
         db.session.add(AuditLog(
@@ -129,19 +144,35 @@ def decrypt(filename):
         ))
         db.session.commit()
         
-        # Send file and clean up after
+        # Send file with proper cleanup
         original_filename = filename.replace('.enc', '')
-        response = send_file(dec_path, as_attachment=True, download_name=original_filename)
+        print(f"  📤 Sending file as: {original_filename}")
         
-        # Clean up temp file after sending
+        response = send_file(
+            dec_path, 
+            as_attachment=True, 
+            download_name=original_filename,
+            mimetype='application/octet-stream'
+        )
+        
+        # Clean up after download
         @response.call_on_close
         def cleanup():
-            if os.path.exists(dec_path):
-                os.remove(dec_path)
+            try:
+                if os.path.exists(dec_path):
+                    os.remove(dec_path)
+                    print(f"  🗑️ Cleaned up temp file: {dec_path}")
+            except Exception as e:
+                print(f"  ⚠️ Cleanup failed: {e}")
         
         return response
     
     except Exception as e:
+        error_details = traceback.format_exc()
+        print(f"\n❌ DECRYPTION ERROR:")
+        print(f"  Error: {str(e)}")
+        print(f"  Details:\n{error_details}")
+        
         # Log failed download
         db.session.add(AuditLog(
             action="Decrypt Failed",
@@ -153,7 +184,6 @@ def decrypt(filename):
         ))
         db.session.commit()
         
-        print(f"❌ Decryption error: {str(e)}")  # Debug print
         flash(f"❌ Download failed: {str(e)}")
         return redirect(url_for('main.index'))
 
