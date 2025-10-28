@@ -2,318 +2,330 @@
 
 {% block extra_css %}
 <style>
-    .header-card {
-        background: white;
-        padding: 1.25rem 1.5rem;
-        border-radius: 8px;
-        margin-bottom: 1.25rem;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
+  .header-card {
+    background: var(--card-bg);
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
 
-    .header-card h1 {
-        color: #1a202c;
-        font-size: 1.4rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
+  .header-card h1 {
+    color: var(--dark);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
 
-    .vault-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: #ebf8ff;
-        color: #2c5282;
-        padding: 0.4rem 0.75rem;
-        border-radius: 5px;
-        font-size: 0.8rem;
-        font-weight: 600;
-    }
+  .vault-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ebf8ff;
+    color: var(--primary-dark);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
 
-    .vault-tag i {
-        color: #3182ce;
-    }
+  .vault-tag i {
+    color: var(--primary);
+  }
 
-    .stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.25rem;
-    }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
 
-    .stat {
-        background: white;
-        padding: 1.25rem;
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-        text-align: center;
-    }
+  .stat {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+  }
 
-    .stat-value {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #1a202c;
-        margin-bottom: 0.25rem;
-    }
+  .stat:hover {
+    transform: translateY(-2px);
+  }
 
-    .stat-label {
-        font-size: 0.75rem;
-        color: #718096;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 600;
-    }
+  .stat-value {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 0.5rem;
+  }
 
-    .card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 8px;
-        margin-bottom: 1.25rem;
-        border: 1px solid #e2e8f0;
-    }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
 
-    .card-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #1a202c;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+  .card {
+    background: var(--card-bg);
+    padding: 1.75rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
 
-    .card-title i {
-        color: #3182ce;
-    }
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
 
-    .upload-area {
-        border: 2px dashed #cbd5e0;
-        border-radius: 8px;
-        padding: 2rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        background: #f7fafc;
-    }
+  .card-title i {
+    color: var(--primary);
+  }
 
-    .upload-area:hover {
-        border-color: #3182ce;
-        background: #ebf8ff;
-    }
+  .upload-area {
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    padding: 2.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #f7fafc;
+  }
 
-    .upload-area i {
-        font-size: 2.5rem;
-        color: #a0aec0;
-        margin-bottom: 0.75rem;
-    }
+  .upload-area:hover {
+    border-color: var(--primary);
+    background: #ebf8ff;
+  }
 
-    .upload-area h3 {
-        color: #2d3748;
-        font-size: 1rem;
-        margin-bottom: 0.25rem;
-    }
+  .upload-area i {
+    font-size: 2.75rem;
+    color: #a0aec0;
+    margin-bottom: 1rem;
+  }
 
-    .upload-area p {
-        color: #718096;
-        font-size: 0.8rem;
-    }
+  .upload-area h3 {
+    color: var(--dark);
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
 
-    .file-list {
-        border: 1px solid #e2e8f0;
-        border-radius: 6px;
-        overflow: hidden;
-    }
+  .upload-area p {
+    color: var(--secondary);
+    font-size: 0.85rem;
+  }
 
-    .file-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.9rem 1rem;
-        border-bottom: 1px solid #e2e8f0;
-        transition: background 0.2s;
-    }
+  .file-list {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
 
-    .file-item:last-child {
-        border-bottom: none;
-    }
+  .file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
 
-    .file-item:hover {
-        background: #f7fafc;
-    }
+  .file-item:last-child {
+    border-bottom: none;
+  }
 
-    .file-name {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #2d3748;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
+  .file-item:hover {
+    background: #f7fafc;
+  }
 
-    .file-name i {
-        color: #3182ce;
-    }
+  .file-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dark);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
 
-    .download-btn {
-        padding: 0.4rem 0.9rem;
-        background: #3182ce;
-        color: white;
-        border-radius: 5px;
-        text-decoration: none;
-        font-size: 0.8rem;
-        font-weight: 600;
-        transition: background 0.2s;
-    }
+  .file-name i {
+    color: var(--primary);
+  }
 
-    .download-btn:hover {
-        background: #2c5282;
-    }
+  .download-btn {
+    padding: 0.5rem 1rem;
+    background: var(--primary);
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 
-    .empty {
-        text-align: center;
-        padding: 2.5rem;
-        color: #a0aec0;
-    }
+  .download-btn:hover {
+    background: var(--primary-dark);
+  }
 
-    .empty i {
-        font-size: 3rem;
-        margin-bottom: 0.75rem;
-        opacity: 0.4;
-    }
+  .empty {
+    text-align: center;
+    padding: 3rem;
+    color: #a0aec0;
+  }
 
-    .empty p {
-        font-size: 0.9rem;
-    }
+  .empty i {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.4;
+  }
 
-    .activity {
-        max-height: 350px;
-        overflow-y: auto;
-    }
+  .empty p {
+    font-size: 0.95rem;
+  }
 
-    .log-item {
-        display: grid;
-        grid-template-columns: 140px 1fr auto;
-        gap: 1rem;
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid #e2e8f0;
-        font-size: 0.85rem;
-    }
+  .activity {
+    max-height: 350px;
+    overflow-y: auto;
+  }
 
-    .log-item:last-child {
-        border-bottom: none;
-    }
+  .log-item {
+    display: grid;
+    grid-template-columns: 140px 1fr auto;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
 
-    .log-time {
-        color: #718096;
-        font-size: 0.75rem;
-    }
+  .log-item:last-child {
+    border-bottom: none;
+  }
 
-    .log-action {
-        color: #2d3748;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
+  .log-time {
+    color: var(--secondary);
+    font-size: 0.8rem;
+  }
 
-    .log-action i {
-        font-size: 0.75rem;
-    }
+  .log-action {
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-    .log-action i.fa-check-circle {
-        color: #48bb78;
-    }
+  .log-action i {
+    font-size: 0.8rem;
+  }
 
-    .log-action i.fa-exclamation-circle {
-        color: #f56565;
-    }
+  .log-action i.fa-check-circle {
+    color: var(--success);
+  }
 
-    .log-file {
-        color: #718096;
-        font-size: 0.8rem;
-        text-align: right;
-    }
+  .log-action i.fa-exclamation-circle {
+    color: var(--error);
+  }
+
+  .log-file {
+    color: var(--secondary);
+    font-size: 0.8rem;
+    text-align: right;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="header-card">
-    <h1>Welcome, {{ user.username }}!</h1>
-    <div class="vault-tag">
-        <i class="fas fa-shield-alt"></i>
-        {{ user.vault_name }}
-    </div>
+  <h1>Welcome, {{ user.username }}!</h1>
+  <div class="vault-tag">
+    <i class="fas fa-shield-alt"></i>
+    {{ user.vault_name }}
+  </div>
 </div>
 
 <div class="stats">
-    <div class="stat">
-        <div class="stat-value">{{ vault_files|length }}</div>
-        <div class="stat-label">Encrypted Files</div>
-    </div>
-    <div class="stat">
-        <div class="stat-value">{{ logs|length }}</div>
-        <div class="stat-label">Recent Actions</div>
-    </div>
-    <div class="stat">
-        <div class="stat-value">AES-128</div>
-        <div class="stat-label">Encryption</div>
-    </div>
+  <div class="stat">
+    <div class="stat-value">{{ vault_files|length }}</div>
+    <div class="stat-label">Encrypted Files</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">{{ logs|length }}</div>
+    <div class="stat-label">Recent Actions</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">AES-128</div>
+    <div class="stat-label">Encryption</div>
+  </div>
 </div>
 
 <div class="card">
-    <div class="card-title">
-        <i class="fas fa-cloud-upload-alt"></i> Upload Files
+  <div class="card-title">
+    <i class="fas fa-cloud-upload-alt"></i> Upload Files
+  </div>
+  <form method="POST" action="/upload" enctype="multipart/form-data">
+    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+      <i class="fas fa-file-upload"></i>
+      <h3>Click to select file</h3>
+      <p>Automatically encrypted before storage</p>
+      <input type="file" id="fileInput" name="file" style="display:none" onchange="this.form.submit()" required>
     </div>
-    <form method="POST" action="/upload" enctype="multipart/form-data">
-        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-            <i class="fas fa-file-upload"></i>
-            <h3>Click to select file</h3>
-            <p>Automatically encrypted before storage</p>
-            <input type="file" id="fileInput" name="file" style="display:none" onchange="this.form.submit()" required>
-        </div>
-    </form>
+  </form>
 </div>
 
 <div class="card">
-    <div class="card-title">
-        <i class="fas fa-folder-open"></i> Your Files
+  <div class="card-title">
+    <i class="fas fa-folder-open"></i> Your Files
+  </div>
+  {% if vault_files and vault_files[0] %}
+  <div class="file-list">
+    {% for file in vault_files %}
+    <div class="file-item">
+      <div class="file-name">
+        <i class="fas fa-file-alt"></i>
+        {{ file }}
+      </div>
+      <a href="/decrypt/{{ file }}" class="download-btn">
+        <i class="fas fa-download"></i> Download
+      </a>
     </div>
-    {% if vault_files and vault_files[0] %}
-    <div class="file-list">
-        {% for file in vault_files %}
-        <div class="file-item">
-            <div class="file-name">
-                <i class="fas fa-file-alt"></i>
-                {{ file }}
-            </div>
-            <a href="/decrypt/{{ file }}" class="download-btn">
-                <i class="fas fa-download"></i> Download
-            </a>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty">
-        <i class="fas fa-inbox"></i>
-        <p>No files yet. Upload your first file!</p>
-    </div>
-    {% endif %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">
+    <i class="fas fa-inbox"></i>
+    <p>No files yet. Upload your first file!</p>
+  </div>
+  {% endif %}
 </div>
 
 <div class="card">
-    <div class="card-title">
-        <i class="fas fa-history"></i> Activity Log
+  <div class="card-title">
+    <i class="fas fa-history"></i> Activity Log
+  </div>
+  <div class="activity">
+    {% for log in logs %}
+    <div class="log-item">
+      <div class="log-time">{{ log.timestamp.strftime('%m/%d %H:%M') }}</div>
+      <div class="log-action">
+        <i class="fas fa-{{ 'exclamation-circle' if log.status == 'failed' else 'check-circle' }}"></i>
+        {{ log.action }}
+      </div>
+      <div class="log-file">{{ log.filename if log.filename else '-' }}</div>
     </div>
-    <div class="activity">
-        {% for log in logs %}
-        <div class="log-item">
-            <div class="log-time">{{ log.timestamp.strftime('%m/%d %H:%M') }}</div>
-            <div class="log-action">
-                <i class="fas fa-{{ 'exclamation-circle' if log.status == 'failed' else 'check-circle' }}"></i>
-                {{ log.action }}
-            </div>
-            <div class="log-file">{{ log.filename if log.filename else '-' }}</div>
-        </div>
-        {% endfor %}
-    </div>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

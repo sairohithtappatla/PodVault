@@ -2,54 +2,55 @@
 
 {% block extra_css %}
 <style>
-  .register-wrapper {
+  .auth-wrapper {
     min-height: calc(100vh - 60px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: 2rem 1rem;
   }
 
-  .register-box {
-    background: white;
-    padding: 2rem 2.5rem;
+  .auth-box {
+    background: var(--card-bg);
+    padding: 2.5rem;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-lg);
     width: 100%;
     max-width: 450px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
   }
 
-  .register-header {
+  .auth-header {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
   }
 
-  .register-header h1 {
-    color: #1a202c;
-    font-size: 1.5rem;
+  .auth-header h1 {
+    color: var(--dark);
+    font-size: 1.6rem;
     font-weight: 700;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
   }
 
-  .register-header p {
-    color: #718096;
-    font-size: 0.875rem;
+  .auth-header p {
+    color: var(--secondary);
+    font-size: 0.9rem;
   }
 
   .features {
     background: #f7fafc;
-    border: 1px solid #e2e8f0;
-    padding: 1rem;
+    border: 1px solid var(--border);
+    padding: 1.25rem;
     border-radius: 6px;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.75rem;
   }
 
   .features h3 {
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: #2d3748;
+    color: var(--dark);
     margin-bottom: 0.75rem;
+    text-align: center;
   }
 
   .features ul {
@@ -57,74 +58,78 @@
   }
 
   .features li {
-    padding: 0.35rem 0;
-    font-size: 0.8rem;
-    color: #4a5568;
+    padding: 0.5rem 0;
+    font-size: 0.85rem;
+    color: var(--secondary);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
   .features li i {
-    color: #48bb78;
-    font-size: 0.75rem;
+    color: var(--success);
+    font-size: 0.8rem;
   }
 
   .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
   }
 
   .form-group label {
     display: block;
-    margin-bottom: 0.4rem;
-    color: #2d3748;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
     font-weight: 500;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
   }
 
   .form-group input {
     width: 100%;
-    padding: 0.65rem 0.75rem;
-    border: 1px solid #cbd5e0;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
     border-radius: 6px;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     transition: all 0.2s;
     font-family: 'Inter', sans-serif;
   }
 
   .form-group input:focus {
     outline: none;
-    border-color: #3182ce;
+    border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
   }
 
-  .register-btn {
+  .auth-btn {
     width: 100%;
-    padding: 0.7rem;
-    margin-top: 0.5rem;
-    background: #3182ce;
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+    background: var(--primary);
     color: white;
     border: none;
     border-radius: 6px;
     font-weight: 600;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
 
-  .register-btn:hover {
-    background: #2c5282;
+  .auth-btn:hover {
+    background: var(--primary-dark);
   }
 
-  .login-text {
+  .auth-link {
     text-align: center;
-    margin-top: 1.25rem;
-    font-size: 0.85rem;
-    color: #4a5568;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--secondary);
   }
 
-  .login-text a {
-    color: #3182ce;
+  .auth-link a {
+    color: var(--primary);
     font-weight: 600;
     text-decoration: none;
   }
@@ -132,21 +137,16 @@
 {% endblock %}
 
 {% block content %}
-<div class="register-wrapper">
-  <div class="register-box">
-    <div class="register-header">
+<div class="auth-wrapper">
+  <div class="auth-box">
+    <div class="auth-header">
       <h1>Create Account</h1>
       <p>Get your secure vault instantly</p>
     </div>
 
     <div class="features">
       <h3>Your vault includes:</h3>
-      <ul>
-        <li><i class="fas fa-check-circle"></i> Isolated Podman container</li>
-        <li><i class="fas fa-check-circle"></i> Unique encryption key</li>
-        <li><i class="fas fa-check-circle"></i> Auto key rotation (5 min)</li>
-        <li><i class="fas fa-check-circle"></i> Unlimited encrypted storage</li>
-      </ul>
+      
     </div>
 
     <form method="POST">
@@ -160,12 +160,12 @@
         <input type="password" name="password" placeholder="Create password" required minlength="6">
       </div>
 
-      <button type="submit" class="register-btn">
+      <button type="submit" class="auth-btn">
         <i class="fas fa-user-plus"></i> Create Vault & Register
       </button>
     </form>
 
-    <div class="login-text">
+    <div class="auth-link">
       Already have an account? <a href="/login">Login</a>
     </div>
   </div>

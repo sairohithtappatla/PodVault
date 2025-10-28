@@ -3,84 +3,100 @@
 {% block extra_css %}
 <style>
   .page-title {
-    background: white;
-    padding: 1.25rem 1.5rem;
+    background: var(--card-bg);
+    padding: 1.5rem 2rem;
     border-radius: 8px;
-    margin-bottom: 1.25rem;
-    border: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+    text-align: center;
   }
 
   .page-title h1 {
-    color: #1a202c;
-    font-size: 1.4rem;
+    color: var(--dark);
+    font-size: 1.5rem;
     font-weight: 700;
   }
 
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
   }
 
   .stat-box {
-    background: white;
-    padding: 1.5rem;
+    background: var(--card-bg);
+    padding: 1.75rem;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border);
     text-align: center;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+  }
+
+  .stat-box:hover {
+    transform: translateY(-2px);
   }
 
   .stat-box h2 {
-    font-size: 2.2rem;
-    color: #1a202c;
+    font-size: 2.5rem;
+    color: var(--dark);
     font-weight: 700;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
   }
 
   .stat-box p {
-    color: #718096;
-    font-size: 0.75rem;
+    color: var(--secondary);
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 600;
   }
 
   .chart-card {
-    background: white;
-    padding: 1.5rem;
+    background: var(--card-bg);
+    padding: 1.75rem;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    margin-bottom: 1.25rem;
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
   }
 
   .chart-card h3 {
-    color: #1a202c;
-    font-size: 1.1rem;
-    margin-bottom: 1.25rem;
+    color: var(--dark);
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
     font-weight: 700;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
   }
 
   .chart-card h3 i {
-    color: #3182ce;
+    color: var(--primary);
   }
 
   .back-btn {
     text-align: center;
-    margin-top: 1rem;
+    margin-top: 2rem;
   }
 
   .back-btn a {
-    color: #3182ce;
+    color: var(--primary);
     text-decoration: none;
     font-weight: 600;
     font-size: 0.875rem;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    transition: background 0.2s;
+  }
+
+  .back-btn a:hover {
+    background: #ebf8ff;
   }
 </style>
 {% endblock %}
@@ -121,20 +137,25 @@
     type: 'bar',
     data: {
       labels: {{ logs | map(attribute = 'action') | list | tojson | safe }},
-    datasets: [{
-      label: 'Actions',
-      data: {{ range(1, logs| length + 1) | list | tojson | safe }},
-  backgroundColor: '#3182ce',
-    borderRadius: 4
+      datasets: [{
+        label: 'Actions',
+        data: {{ range(1, logs| length + 1) | list | tojson | safe }},
+        backgroundColor: '#3182ce',
+        borderRadius: 4
       }]
     },
-  options: {
-    responsive: true,
-      plugins: { legend: { display: false } },
-    scales: {
-      y: { beginAtZero: true, ticks: { stepSize: 1 } }
+    options: {
+      responsive: true,
+      plugins: { 
+        legend: { display: false } 
+      },
+      scales: {
+        y: { 
+          beginAtZero: true, 
+          ticks: { stepSize: 1 } 
+        }
+      }
     }
-  }
   });
 </script>
 {% endblock %}
