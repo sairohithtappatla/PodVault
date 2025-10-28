@@ -55,8 +55,9 @@ def decrypt_file_from_vault(filename, vault_name):
     result = subprocess.run([
         "podman", "exec", vault_name,
         "cat", f"/vault/data/{filename}"
-    ], capture_output=True)
+    ], capture_output=True, check=True)  # Added check=True
     
+    # Decrypt the file
     decrypted = f.decrypt(result.stdout)
     
     # Save temporarily for download
@@ -66,7 +67,7 @@ def decrypt_file_from_vault(filename, vault_name):
     
     return dec_path
 
-# ============ NEW: KEY ROTATION WITH RE-ENCRYPTION ============
+# ============ KEY ROTATION WITH RE-ENCRYPTION ============
 
 def rotate_vault_key(vault_name):
     """Rotate encryption key for specific vault and re-encrypt all files"""
@@ -82,8 +83,8 @@ def rotate_vault_key(vault_name):
         
         old_key = old_key_data.encode()
         old_fernet = Fernet(old_key)
-    except subprocess.CalledProcessError:
-        print(f"❌ Failed to load key for {vault_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Failed to load key for {vault_name}: {e}")
         return False
     
     # 2. Generate new key
@@ -101,9 +102,9 @@ def rotate_vault_key(vault_name):
             print(f"⚠️ No files in {vault_name}, skipping re-encryption")
             files = []
         else:
-            files = files_output.split('\n')
-    except subprocess.CalledProcessError:
-        print(f"❌ Failed to list files in {vault_name}")
+            files = [f for f in files_output.split('\n') if f.strip()]
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Failed to list files in {vault_name}: {e}")
         return False
     
     # 4. Re-encrypt each file
@@ -118,6 +119,10 @@ def rotate_vault_key(vault_name):
                 "podman", "exec", vault_name,
                 "cat", f"/vault/data/{filename}"
             ], capture_output=True, check=True).stdout
+            
+            if not encrypted_data:
+                print(f"  ⚠️ Empty file: {filename}, skipping")
+                continue
             
             # Decrypt with old key
             plaintext = old_fernet.decrypt(encrypted_data)
@@ -147,8 +152,8 @@ def rotate_vault_key(vault_name):
             f"mkdir -p /vault/keys/archive && "
             f"echo '{old_key_data}' > /vault/keys/archive/key_{timestamp}.old"
         ], check=True)
-    except subprocess.CalledProcessError:
-        print(f"⚠️ Failed to archive old key for {vault_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️ Failed to archive old key for {vault_name}: {e}")
     
     # 6. Save new key as active
     try:
@@ -156,8 +161,8 @@ def rotate_vault_key(vault_name):
             "podman", "exec", vault_name,
             "sh", "-c", f"echo '{new_key.decode()}' > /vault/keys/master.key"
         ], check=True)
-    except subprocess.CalledProcessError:
-        print(f"❌ Failed to save new key for {vault_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Failed to save new key for {vault_name}: {e}")
         return False
     
     print(f"✅ Key rotation completed for {vault_name} ({re_encrypted_count} files re-encrypted)")
@@ -173,7 +178,7 @@ def rotate_all_vaults():
             "podman", "ps", "--filter", "name=vault_", "--format", "{{.Names}}"
         ], capture_output=True, text=True, check=True)
         
-        vault_names = [v for v in result.stdout.strip().split('\n') if v.startswith('vault_')]
+        vault_names = [v.strip() for v in result.stdout.strip().split('\n') if v.strip().startswith('vault_')]
         
         if not vault_names:
             print("⚠️ No active vaults found")

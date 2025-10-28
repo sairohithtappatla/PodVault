@@ -115,8 +115,10 @@ def decrypt(filename):
     vault_name = current_user.vault_name
     
     try:
+        # Decrypt file from vault
         dec_path = decrypt_file_from_vault(filename, vault_name)
         
+        # Log successful download
         db.session.add(AuditLog(
             action="Decrypted Download",
             filename=filename,
@@ -127,9 +129,20 @@ def decrypt(filename):
         ))
         db.session.commit()
         
-        return send_file(dec_path, as_attachment=True)
+        # Send file and clean up after
+        original_filename = filename.replace('.enc', '')
+        response = send_file(dec_path, as_attachment=True, download_name=original_filename)
+        
+        # Clean up temp file after sending
+        @response.call_on_close
+        def cleanup():
+            if os.path.exists(dec_path):
+                os.remove(dec_path)
+        
+        return response
     
     except Exception as e:
+        # Log failed download
         db.session.add(AuditLog(
             action="Decrypt Failed",
             filename=filename,
@@ -139,7 +152,9 @@ def decrypt(filename):
             status='failed'
         ))
         db.session.commit()
-        flash(f"❌ Decryption failed: {str(e)}")
+        
+        print(f"❌ Decryption error: {str(e)}")  # Debug print
+        flash(f"❌ Download failed: {str(e)}")
         return redirect(url_for('main.index'))
 
 @main.route('/dashboard')
