@@ -55,7 +55,7 @@ def decrypt_file_from_vault(filename, vault_name):
     result = subprocess.run([
         "podman", "exec", vault_name,
         "cat", f"/vault/data/{filename}"
-    ], capture_output=True, check=True)  # Added check=True
+    ], capture_output=True, check=True)
     
     # Decrypt the file
     decrypted = f.decrypt(result.stdout)
@@ -172,13 +172,16 @@ def rotate_all_vaults():
     """Rotate keys for all active vaults"""
     print("\n🔄 Starting key rotation for all vaults...")
     
-    # Get all running vault containers
     try:
         result = subprocess.run([
-            "podman", "ps", "--filter", "name=vault_", "--format", "{{.Names}}"
+            "podman", "ps", 
+            "--filter", "name=vault_",
+            "--format", "{{.Names}}"
         ], capture_output=True, text=True, check=True)
         
-        vault_names = [v.strip() for v in result.stdout.strip().split('\n') if v.strip().startswith('vault_')]
+        # FIXED: Proper list comprehension syntax
+        vault_names = [v.strip() for v in result.stdout.strip().split('\n') 
+                      if v.strip() and v.strip().startswith('vault_')]
         
         if not vault_names:
             print("⚠️ No active vaults found")

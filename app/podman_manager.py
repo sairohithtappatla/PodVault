@@ -10,11 +10,13 @@ def create_user_vault(username):
     # Check if vault already exists
     try:
         check_container = subprocess.run([
-            "podman", "ps", "-a", "--filter", f"name={vault_name}", "--format", "{{.Names}}"
+            "podman", "ps", "-a", "--filter", f"name=^{vault_name}$", "--format", "{{.Names}}"
         ], capture_output=True, text=True, check=True)
         
         if vault_name in check_container.stdout:
             print(f"⚠️ Vault {vault_name} already exists, using existing vault")
+            # Make sure it's running
+            subprocess.run(["podman", "start", vault_name], stderr=subprocess.DEVNULL)
             return vault_name
     except subprocess.CalledProcessError as e:
         print(f"❌ Error checking for existing vault: {e.stderr}")
@@ -30,7 +32,7 @@ def create_user_vault(username):
     except Exception as e:
         print(f"⚠️ Volume creation warning: {e}")
     
-    # Create container
+    # Create container - FIXED: Use proper list format
     try:
         result = subprocess.run([
             "podman", "run", "-d",
@@ -41,8 +43,11 @@ def create_user_vault(username):
             "sleep", "infinity"
         ], capture_output=True, text=True, check=True)
         print(f"✅ Container created: {vault_name}")
+        print(f"   Container ID: {result.stdout.strip()[:12]}")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Container creation failed: {e.stderr}")
+        print(f"❌ Container creation failed:")
+        print(f"   stdout: {e.stdout}")
+        print(f"   stderr: {e.stderr}")
         raise Exception(f"Failed to create Podman container: {e.stderr}")
     
     # Generate initial key
@@ -55,23 +60,40 @@ def create_user_vault(username):
         ], capture_output=True, text=True, check=True)
         print(f"✅ Encryption key generated for {vault_name}")
     except subprocess.CalledProcessError as e:
-        print(f"❌ Key generation failed: {e.stderr}")
+        print(f"❌ Key generation failed:")
+        print(f"   stdout: {e.stdout}")
+        print(f"   stderr: {e.stderr}")
+        # Clean up the container if key generation fails
+        subprocess.run(["podman", "rm", "-f", vault_name], stderr=subprocess.DEVNULL)
         raise Exception(f"Failed to generate encryption key: {e.stderr}")
     
     return vault_name
 
 def list_user_files(vault_name):
     """List all files in user's vault"""
-    result = subprocess.run([
-        "podman", "exec", vault_name,
-        "ls", "/vault/data"
-    ], capture_output=True, text=True)
-    
-    return result.stdout.strip().split('\n') if result.stdout else []
+    try:
+        result = subprocess.run([
+            "podman", "exec", vault_name,
+            "ls", "/vault/data"
+        ], capture_output=True, text=True, check=True)
+        
+        files = [f.strip() for f in result.stdout.strip().split('\n') if f.strip()]
+        return files if files else []
+    except subprocess.CalledProcessError as e:
+        print(f"⚠️ Error listing files in {vault_name}: {e.stderr}")
+        return []
 
 def delete_vault(vault_name):
     """Delete user's vault container and volumes"""
-    subprocess.run(["podman", "stop", vault_name])
-    subprocess.run(["podman", "rm", vault_name])
-    subprocess.run(["podman", "volume", "rm", f"{vault_name}_data"])
-    subprocess.run(["podman", "volume", "rm", f"{vault_name}_keys"])
+    try:
+        subprocess.run(["podman", "stop", vault_name], 
+                      stderr=subprocess.DEVNULL, check=False)
+        subprocess.run(["podman", "rm", vault_name], 
+                      stderr=subprocess.DEVNULL, check=False)
+        subprocess.run(["podman", "volume", "rm", f"{vault_name}_data"], 
+                      stderr=subprocess.DEVNULL, check=False)
+        subprocess.run(["podman", "volume", "rm", f"{vault_name}_keys"], 
+                      stderr=subprocess.DEVNULL, check=False)
+        print(f"✅ Vault {vault_name} deleted successfully")
+    except Exception as e:
+        print(f"⚠️ Error deleting vault {vault_name}: {e}")
