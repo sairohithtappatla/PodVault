@@ -34,7 +34,7 @@ def load_vault_key(vault_name):
 
 def encrypt_file_for_vault(filepath, vault_name):
     """Encrypt file using vault-specific key"""
-    print(f"\n📤 ENCRYPTING FILE")
+    print(f"\n🔤 ENCRYPTING FILE")
     print(f"   File: {filepath}")
     print(f"   Vault: {vault_name}")
     
@@ -49,41 +49,78 @@ def encrypt_file_for_vault(filepath, vault_name):
     encrypted = f.encrypt(data)
     print(f"   Encrypted size: {len(encrypted)} bytes")
     
-    # Store in vault's container
+    # Store in vault's container - FIXED: Write to temp file first
     enc_filename = os.path.basename(filepath) + ".enc"
+    temp_enc_path = f"/tmp/{enc_filename}"
+    
+    # Write encrypted data to temporary file
+    with open(temp_enc_path, "wb") as f_out:
+        f_out.write(encrypted)
+    
+    print(f"   💾 Temp file: {temp_enc_path} ({len(encrypted)} bytes)")
+    
+    # Copy temp file into container using podman cp
     result = subprocess.run([
-        "podman", "exec", vault_name,
-        "sh", "-c", f"cat > /vault/data/{enc_filename}"
-    ], input=encrypted, capture_output=True)  # Removed `text=True`
+        "podman", "cp", 
+        temp_enc_path,
+        f"{vault_name}:/vault/data/{enc_filename}"
+    ], capture_output=True, text=True)
+    
+    # Clean up temp file
+    if os.path.exists(temp_enc_path):
+        os.remove(temp_enc_path)
     
     if result.returncode == 0:
         print(f"   ✅ Stored as: {enc_filename}")
+        
+        # Verify file was written correctly
+        verify = subprocess.run([
+            "podman", "exec", vault_name,
+            "stat", "-c", "%s", f"/vault/data/{enc_filename}"
+        ], capture_output=True, text=True)
+        
+        if verify.returncode == 0:
+            stored_size = int(verify.stdout.strip())
+            print(f"   ✅ Verified size: {stored_size} bytes")
+            if stored_size != len(encrypted):
+                raise Exception(f"Size mismatch! Expected {len(encrypted)}, got {stored_size}")
+        else:
+            print(f"   ⚠️ Could not verify file size")
     else:
         print(f"   ❌ Storage failed: {result.stderr}")
-        print(f"   Command output: {result.stdout}")
         raise Exception(f"Failed to store encrypted file: {result.stderr}")
     
     return enc_filename
 
+
 def decrypt_file_from_vault(filename, vault_name):
     """Decrypt file from specific vault"""
-    print(f"\n📥 DECRYPTING FILE")
+    print(f"\n🔥 DECRYPTING FILE")
     print(f"   File: {filename}")
     print(f"   Vault: {vault_name}")
     
     key = load_vault_key(vault_name)
     f = Fernet(key)
     
-    # Read encrypted file from container
+    # Copy encrypted file from container to temp location - FIXED
+    temp_enc_path = f"/tmp/{filename}"
+    
     result = subprocess.run([
-        "podman", "exec", vault_name,
-        "cat", f"/vault/data/{filename}"
+        "podman", "cp",
+        f"{vault_name}:/vault/data/{filename}",
+        temp_enc_path
     ], capture_output=True, text=True)
     
-    encrypted_data = result.stdout
+    if result.returncode != 0:
+        raise Exception(f"❌ Failed to copy file from container: {result.stderr}")
+    
+    # Read the encrypted file
+    with open(temp_enc_path, "rb") as f_in:
+        encrypted_data = f_in.read()
+    
     print(f"   Encrypted data size: {len(encrypted_data)} bytes")
     
-    if not encrypted_data or len(encrypted_data) < 10:  # Adjust threshold for valid data
+    if not encrypted_data or len(encrypted_data) < 10:
         raise Exception(f"❌ Encrypted file is empty or invalid: {filename}")
     
     try:
@@ -93,8 +130,12 @@ def decrypt_file_from_vault(filename, vault_name):
         print(f"   ❌ Decryption failed: {str(e)}")
         print(f"   Key being used: {key[:20]}...")
         raise
+    finally:
+        # Clean up temp encrypted file
+        if os.path.exists(temp_enc_path):
+            os.remove(temp_enc_path)
     
-    # Save temporarily for download
+    # Save decrypted file temporarily for download
     dec_path = f"/tmp/{filename.replace('.enc', '')}"
     with open(dec_path, "wb") as f_out:
         f_out.write(decrypted)
