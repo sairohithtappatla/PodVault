@@ -5,38 +5,58 @@ def create_user_vault(username):
     """Create isolated Podman container for user"""
     vault_name = f"vault_{username}"
     
-    # Check if vault already exists
-    check_container = subprocess.run([
-        "podman", "ps", "-a", "--filter", f"name={vault_name}", "--format", "{{.Names}}"
-    ], capture_output=True, text=True)
+    print(f"🔧 Creating vault: {vault_name}")
     
-    if vault_name in check_container.stdout:
-        print(f"⚠️ Vault {vault_name} already exists, using existing vault")
-        return vault_name
+    # Check if vault already exists
+    try:
+        check_container = subprocess.run([
+            "podman", "ps", "-a", "--filter", f"name={vault_name}", "--format", "{{.Names}}"
+        ], capture_output=True, text=True, check=True)
+        
+        if vault_name in check_container.stdout:
+            print(f"⚠️ Vault {vault_name} already exists, using existing vault")
+            return vault_name
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error checking for existing vault: {e.stderr}")
+        raise Exception(f"Podman check failed: {e.stderr}")
     
     # Create volumes (ignore if already exist)
-    subprocess.run(["podman", "volume", "create", f"{vault_name}_data"], 
-                   stderr=subprocess.DEVNULL)
-    subprocess.run(["podman", "volume", "create", f"{vault_name}_keys"], 
-                   stderr=subprocess.DEVNULL)
+    try:
+        subprocess.run(["podman", "volume", "create", f"{vault_name}_data"], 
+                       stderr=subprocess.DEVNULL, check=False)
+        subprocess.run(["podman", "volume", "create", f"{vault_name}_keys"], 
+                       stderr=subprocess.DEVNULL, check=False)
+        print(f"✅ Volumes created for {vault_name}")
+    except Exception as e:
+        print(f"⚠️ Volume creation warning: {e}")
     
     # Create container
-    subprocess.run([
-        "podman", "run", "-d",
-        "--name", vault_name,
-        "-v", f"{vault_name}_data:/vault/data",
-        "-v", f"{vault_name}_keys:/vault/keys",
-        "alpine:latest",
-        "sleep", "infinity"
-    ])
+    try:
+        result = subprocess.run([
+            "podman", "run", "-d",
+            "--name", vault_name,
+            "-v", f"{vault_name}_data:/vault/data",
+            "-v", f"{vault_name}_keys:/vault/keys",
+            "alpine:latest",
+            "sleep", "infinity"
+        ], capture_output=True, text=True, check=True)
+        print(f"✅ Container created: {vault_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Container creation failed: {e.stderr}")
+        raise Exception(f"Failed to create Podman container: {e.stderr}")
     
     # Generate initial key
-    key = Fernet.generate_key()
-    subprocess.run([
-        "podman", "exec", vault_name,
-        "sh", "-c", 
-        f"mkdir -p /vault/keys /vault/data && echo '{key.decode()}' > /vault/keys/master.key"
-    ])
+    try:
+        key = Fernet.generate_key()
+        result = subprocess.run([
+            "podman", "exec", vault_name,
+            "sh", "-c", 
+            f"mkdir -p /vault/keys /vault/data && echo '{key.decode()}' > /vault/keys/master.key"
+        ], capture_output=True, text=True, check=True)
+        print(f"✅ Encryption key generated for {vault_name}")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Key generation failed: {e.stderr}")
+        raise Exception(f"Failed to generate encryption key: {e.stderr}")
     
     return vault_name
 

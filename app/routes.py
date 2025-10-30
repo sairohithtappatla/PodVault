@@ -40,7 +40,6 @@ def index():
     logs = AuditLog.query.filter_by(user=current_user.username).order_by(AuditLog.timestamp.desc()).all()
     vault_files = list_user_files(current_user.vault_name)
     return render_template('index.html', logs=logs, user=current_user, vault_files=vault_files)
-
 @main.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -51,7 +50,18 @@ def register():
             flash('❌ Username already exists!')
             return redirect(url_for('main.register'))
         
-        vault_name = create_user_vault(username)
+        # ADD DETAILED LOGGING HERE
+        print(f"\n🔧 DEBUG: Attempting to create vault for {username}")
+        try:
+            vault_name = create_user_vault(username)
+            print(f"✅ DEBUG: Vault created successfully: {vault_name}")
+        except Exception as e:
+            print(f"❌ DEBUG: Vault creation failed: {str(e)}")
+            import traceback
+            print(traceback.format_exc())
+            flash(f'❌ Failed to create vault: {str(e)}')
+            return redirect(url_for('main.register'))
+        
         user = User(username=username, password=password, vault_name=vault_name)
         db.session.add(user)
         db.session.commit()
