@@ -54,12 +54,14 @@ def encrypt_file_for_vault(filepath, vault_name):
     result = subprocess.run([
         "podman", "exec", vault_name,
         "sh", "-c", f"cat > /vault/data/{enc_filename}"
-    ], input=encrypted, capture_output=True)
+    ], input=encrypted, capture_output=True, text=True)
     
     if result.returncode == 0:
         print(f"   ✅ Stored as: {enc_filename}")
     else:
         print(f"   ❌ Storage failed: {result.stderr}")
+        print(f"   Command output: {result.stdout}")
+        raise Exception(f"Failed to store encrypted file: {result.stderr}")
     
     return enc_filename
 
