@@ -20,34 +20,55 @@ def generate_vault_key(vault_name):
 
 def load_vault_key(vault_name):
     """Load key from specific vault container"""
+    print(f"🔑 Loading key for {vault_name}...")
     result = subprocess.run([
         "podman", "exec", vault_name,
         "cat", "/vault/keys/master.key"
     ], capture_output=True, text=True)
     
-    return result.stdout.strip().encode()
+    key_str = result.stdout.strip()
+    print(f"   Key length: {len(key_str)} chars")
+    print(f"   Key preview: {key_str[:20]}...")
+    
+    return key_str.encode()
 
 def encrypt_file_for_vault(filepath, vault_name):
     """Encrypt file using vault-specific key"""
+    print(f"\n📤 ENCRYPTING FILE")
+    print(f"   File: {filepath}")
+    print(f"   Vault: {vault_name}")
+    
     key = load_vault_key(vault_name)
     f = Fernet(key)
     
     with open(filepath, "rb") as f_in:
         data = f_in.read()
     
+    print(f"   File size: {len(data)} bytes")
+    
     encrypted = f.encrypt(data)
+    print(f"   Encrypted size: {len(encrypted)} bytes")
     
     # Store in vault's container
     enc_filename = os.path.basename(filepath) + ".enc"
-    subprocess.run([
+    result = subprocess.run([
         "podman", "exec", vault_name,
         "sh", "-c", f"cat > /vault/data/{enc_filename}"
-    ], input=encrypted)
+    ], input=encrypted, capture_output=True)
+    
+    if result.returncode == 0:
+        print(f"   ✅ Stored as: {enc_filename}")
+    else:
+        print(f"   ❌ Storage failed: {result.stderr}")
     
     return enc_filename
 
 def decrypt_file_from_vault(filename, vault_name):
     """Decrypt file from specific vault"""
+    print(f"\n📥 DECRYPTING FILE")
+    print(f"   File: {filename}")
+    print(f"   Vault: {vault_name}")
+    
     key = load_vault_key(vault_name)
     f = Fernet(key)
     
@@ -57,14 +78,24 @@ def decrypt_file_from_vault(filename, vault_name):
         "cat", f"/vault/data/{filename}"
     ], capture_output=True, check=True)
     
+    print(f"   Encrypted data size: {len(result.stdout)} bytes")
+    print(f"   First 50 bytes (base64): {result.stdout[:50]}")
+    
     # Decrypt the file
-    decrypted = f.decrypt(result.stdout)
+    try:
+        decrypted = f.decrypt(result.stdout)
+        print(f"   ✅ Decrypted size: {len(decrypted)} bytes")
+    except Exception as e:
+        print(f"   ❌ Decryption failed: {str(e)}")
+        print(f"   Key being used: {key[:20]}...")
+        raise
     
     # Save temporarily for download
     dec_path = f"/tmp/{filename.replace('.enc', '')}"
     with open(dec_path, "wb") as f_out:
         f_out.write(decrypted)
     
+    print(f"   💾 Saved to: {dec_path}")
     return dec_path
 
 # ============ KEY ROTATION WITH RE-ENCRYPTION ============
@@ -83,6 +114,7 @@ def rotate_vault_key(vault_name):
         
         old_key = old_key_data.encode()
         old_fernet = Fernet(old_key)
+        print(f"   Old key loaded: {old_key_data[:20]}...")
     except subprocess.CalledProcessError as e:
         print(f"❌ Failed to load key for {vault_name}: {e}")
         return False
@@ -90,6 +122,7 @@ def rotate_vault_key(vault_name):
     # 2. Generate new key
     new_key = Fernet.generate_key()
     new_fernet = Fernet(new_key)
+    print(f"   New key generated: {new_key.decode()[:20]}...")
     
     # 3. Get all encrypted files
     try:
@@ -161,6 +194,7 @@ def rotate_vault_key(vault_name):
             "podman", "exec", vault_name,
             "sh", "-c", f"echo '{new_key.decode()}' > /vault/keys/master.key"
         ], check=True)
+        print(f"   ✅ New key saved")
     except subprocess.CalledProcessError as e:
         print(f"❌ Failed to save new key for {vault_name}: {e}")
         return False
@@ -179,7 +213,6 @@ def rotate_all_vaults():
             "--format", "{{.Names}}"
         ], capture_output=True, text=True, check=True)
         
-        # FIXED: Proper list comprehension syntax
         vault_names = [v.strip() for v in result.stdout.strip().split('\n') 
                       if v.strip() and v.strip().startswith('vault_')]
         
