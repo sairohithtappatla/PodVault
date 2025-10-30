@@ -54,7 +54,7 @@ def encrypt_file_for_vault(filepath, vault_name):
     result = subprocess.run([
         "podman", "exec", vault_name,
         "sh", "-c", f"cat > /vault/data/{enc_filename}"
-    ], input=encrypted, capture_output=True, text=True)
+    ], input=encrypted, capture_output=True)  # Removed `text=True`
     
     if result.returncode == 0:
         print(f"   ✅ Stored as: {enc_filename}")
