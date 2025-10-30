@@ -78,12 +78,14 @@ def decrypt_file_from_vault(filename, vault_name):
         "cat", f"/vault/data/{filename}"
     ], capture_output=True, check=True)
     
-    print(f"   Encrypted data size: {len(result.stdout)} bytes")
-    print(f"   First 50 bytes (base64): {result.stdout[:50]}")
+    encrypted_data = result.stdout
+    print(f"   Encrypted data size: {len(encrypted_data)} bytes")
     
-    # Decrypt the file
+    if not encrypted_data:
+        raise Exception(f"❌ Encrypted file is empty: {filename}")
+    
     try:
-        decrypted = f.decrypt(result.stdout)
+        decrypted = f.decrypt(encrypted_data)
         print(f"   ✅ Decrypted size: {len(decrypted)} bytes")
     except Exception as e:
         print(f"   ❌ Decryption failed: {str(e)}")
