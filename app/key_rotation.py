@@ -76,13 +76,13 @@ def decrypt_file_from_vault(filename, vault_name):
     result = subprocess.run([
         "podman", "exec", vault_name,
         "cat", f"/vault/data/{filename}"
-    ], capture_output=True, check=True)
+    ], capture_output=True, text=True)
     
     encrypted_data = result.stdout
     print(f"   Encrypted data size: {len(encrypted_data)} bytes")
     
-    if not encrypted_data:
-        raise Exception(f"❌ Encrypted file is empty: {filename}")
+    if not encrypted_data or len(encrypted_data) < 10:  # Adjust threshold for valid data
+        raise Exception(f"❌ Encrypted file is empty or invalid: {filename}")
     
     try:
         decrypted = f.decrypt(encrypted_data)
